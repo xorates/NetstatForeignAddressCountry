@@ -1,0 +1,30 @@
+#Netstat Foreign IP country finder v1.0 (c) Xorates (https://github.com/xorates) 2017 All rights reserved - Created 17/11/2017
+
+import json;
+import requests;
+import subprocess;
+import time;
+
+u=subprocess.Popen(["netstat","-n"], stdout=subprocess.PIPE, shell=True).stdout.read().splitlines(); #retrieve input
+
+#IP Location Finder v2.0 (c) Xorates (https://github.com/xorates) 2016-2017 All rights reserved - Created 03 December 2016 - Updated 17/11/2017
+def region(ip):
+	if ip != "127.0.0.1": #Check to see if localhost is showing
+		r = requests.get("http://ip-api.com/json/"+str(ip)).json()
+		if r["status"] == "success":
+			return r["timezone"]
+		else:
+			return "fail";
+	else:
+		return "fail";
+ 
+for x in range(4,len(u)): #First 4 lines are rubbish
+	p=len(u[x])-11; #Eliminates state and most whitespace
+	ipaddr,port=str(u[x])[32:p].strip().split(":"); #First 33 are other crap, strip removes whitespace, split removes ":" + makes variables
+	time.sleep(0.1);
+	if ipaddr != "127.0.0.1":
+		place=region(ipaddr); #Find country
+		#k=requests.get("http://ip-api.com/json/"+a).json()["country"];
+		print("IP: {0} \nplace: {1} \nPort: {2} \n========".format(ipaddr,place,port)); # print
+		
+input();
